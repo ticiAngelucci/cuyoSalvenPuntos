@@ -3,6 +3,7 @@
    (y en data/datos-offline.js como respaldo para abrir el juego con doble clic). */
 
 const STORAGE_KEY = 'sem_participantes';
+const ROTACION_KEY = 'sem_rotacion';
 
 const estado = {
   config: null,
@@ -157,12 +158,44 @@ function cantidadDePreguntas(nivel) {
   return Math.min(nivel.preguntasPorRonda || nivel.preguntas.length, nivel.preguntas.length);
 }
 
+/* La tablet recuerda qué preguntas ya salieron: reparte todas las del nivel
+   antes de volver a repetir alguna. */
+function leerRotacion() {
+  try {
+    return JSON.parse(localStorage.getItem(ROTACION_KEY)) || {};
+  } catch {
+    return {};
+  }
+}
+
+function tomarPreguntas(nivel) {
+  const cantidad = cantidadDePreguntas(nivel);
+  const rotacion = leerRotacion();
+  let pendientes = Array.isArray(rotacion[nivel.id]) ? rotacion[nivel.id] : [];
+  pendientes = pendientes.filter((i) => Number.isInteger(i) && i < nivel.preguntas.length);
+
+  const elegidas = [];
+  while (elegidas.length < cantidad) {
+    if (!pendientes.length) {
+      const yaUsadas = new Set(elegidas);
+      pendientes = mezclar(nivel.preguntas.map((_, i) => i)).filter((i) => !yaUsadas.has(i));
+    }
+    elegidas.push(pendientes.shift());
+  }
+
+  rotacion[nivel.id] = pendientes;
+  try {
+    localStorage.setItem(ROTACION_KEY, JSON.stringify(rotacion));
+  } catch { /* si no hay espacio, seguimos igual con el sorteo de esta partida */ }
+  return mezclar(elegidas).map((i) => nivel.preguntas[i]);
+}
+
 function prepararNivel() {
   const nivel = estado.niveles[estado.nivelIdx];
   estado.preguntaIdx = 0;
   estado.puntosNivel = 0;
   estado.vidas = estado.config.vidas;
-  estado.preguntasDelNivel = mezclar(nivel.preguntas).slice(0, cantidadDePreguntas(nivel));
+  estado.preguntasDelNivel = tomarPreguntas(nivel);
 
   const maximo = estado.preguntasDelNivel.length * nivel.puntosPorPregunta;
   $('nivel-nombre').textContent = nivel.nombre;
@@ -512,6 +545,7 @@ function descargarCsvRespuestas() {
 function borrarDatos() {
   if (!confirm('¿Borrar todos los participantes guardados en esta tablet?')) return;
   localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(ROTACION_KEY);
   renderTabla();
 }
 
