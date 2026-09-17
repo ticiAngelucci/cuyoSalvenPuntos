@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<meta name="theme-color" content="#1d1d1f" />
+<title>Salven el Millón — CuyoConnect</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<link rel="icon" href="assets/logo-icono-negro.png" />
+<link rel="apple-touch-icon" href="assets/logo-icono-negro.png" />
+</head>
+<body>
+<div class="fondo" aria-hidden="true">
+  <span class="orbe orbe-1"></span>
+  <span class="orbe orbe-2"></span>
+  <span class="orbe orbe-3"></span>
+</div>
+
+<div id="app">
+
+  <!-- ===== Pantalla: Registro ===== -->
+  <section class="screen active" id="screen-registro">
+    <div class="marca">
+      <img class="logo" src="assets/logo-blanco.png" alt="CuyoConnect" />
+      <h1 class="display"><span class="resaltado" id="titulo-juego">Salven el Millón</span></h1>
+      <p class="sub" id="subtitulo-juego">Hackathon Edition</p>
+    </div>
+    <div class="card">
+      <p class="intro">Respondé, sumá puntos y canjealos por <mark>merch</mark>.<br />
+        En cada nivel elegís: <strong>te plantás</strong> o <strong>seguís</strong>.</p>
+      <form id="form-registro" novalidate>
+        <label>Nombre
+          <input type="text" id="in-nombre" autocomplete="given-name" placeholder="Tu nombre" required />
+        </label>
+        <label>Apellido
+          <input type="text" id="in-apellido" autocomplete="family-name" placeholder="Tu apellido" required />
+        </label>
+        <label>Email
+          <input type="email" id="in-email" autocomplete="email" inputmode="email" placeholder="tu@email.com" required />
+        </label>
+        <p class="error" id="error-registro" hidden></p>
+        <button class="btn btn-jugar btn-lg" type="submit">JUGAR</button>
+      </form>
+    </div>
+    <button class="link-admin" id="btn-abrir-admin" type="button">Panel de organización</button>
+  </section>
+
+  <!-- ===== Pantalla: Inicio de nivel ===== -->
+  <section class="screen" id="screen-nivel">
+    <div class="card center">
+      <div class="medalla" id="nivel-medalla">1</div>
+      <p class="eyebrow">Nivel</p>
+      <h2 class="display" id="nivel-nombre">Nivel 1</h2>
+      <p class="nivel-detalle" id="nivel-detalle"></p>
+      <div class="pill-row">
+        <span class="pill"><span class="moneda">★</span> Asegurados: <strong id="nivel-asegurados">0</strong></span>
+      </div>
+      <button class="btn btn-jugar btn-lg" id="btn-empezar-nivel" type="button">¡VAMOS!</button>
+    </div>
+  </section>
+
+  <!-- ===== Pantalla: Juego ===== -->
+  <section class="screen" id="screen-juego">
+    <header class="hud">
+      <div class="hud-chip">
+        <span class="hud-label">Nivel</span>
+        <span class="hud-value" id="hud-nivel">1</span>
+      </div>
+      <div class="hud-chip">
+        <span class="hud-label">Pregunta</span>
+        <span class="hud-value" id="hud-pregunta">1/10</span>
+      </div>
+      <div class="hud-chip chip-puntos">
+        <span class="hud-label">Puntos</span>
+        <span class="hud-value" id="hud-puntos">0</span>
+      </div>
+      <div class="hud-chip">
+        <span class="hud-label">Vidas</span>
+        <span class="hud-value" id="hud-vidas">♥♥</span>
+      </div>
+    </header>
+
+    <div class="reloj" id="timer-wrap">
+      <svg viewBox="0 0 120 120">
+        <circle class="reloj-fondo" cx="60" cy="60" r="52"></circle>
+        <circle class="reloj-aguja" id="timer-bar" cx="60" cy="60" r="52"></circle>
+      </svg>
+      <span class="reloj-num" id="timer-num">30</span>
+    </div>
+
+    <div class="pregunta-box">
+      <p class="pregunta" id="pregunta-texto"></p>
+    </div>
+
+    <div class="opciones" id="opciones"></div>
+
+    <p class="feedback" id="feedback" hidden></p>
+    <button class="btn btn-jugar btn-lg oculto" id="btn-siguiente" type="button">Siguiente</button>
+  </section>
+
+  <!-- ===== Pantalla: Decisión (checkpoint) ===== -->
+  <section class="screen" id="screen-decision">
+    <div class="card center">
+      <div class="final-emoji">🎯</div>
+      <p class="eyebrow">¡Nivel completado!</p>
+      <h2 class="display">Tenés <span id="dec-puntos" class="destacado">0</span> puntos</h2>
+      <p class="premio-actual">Ahora te llevás: <mark id="dec-premio">—</mark></p>
+      <div class="riesgo">
+        <p><span class="icono-ok">▲</span> Si seguís al <strong id="dec-siguiente-nivel">Nivel 2</strong> podés sumar hasta
+          <strong id="dec-max">+2000</strong> puntos más.</p>
+        <p class="warn"><span class="icono-warn">▼</span> Si te quedás sin vidas, perdés los puntos de ese nivel y te llevás
+          <strong id="dec-asegurados">0</strong>.</p>
+      </div>
+      <p class="aviso" id="aviso-seguir"></p>
+      <div class="acciones">
+        <button class="btn btn-plantarse btn-lg" id="btn-plantarse" type="button">ME PLANTO</button>
+        <button class="btn btn-jugar btn-lg" id="btn-seguir" type="button">SIGO JUGANDO</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Pantalla: Final ===== -->
+  <section class="screen" id="screen-final">
+    <div class="card center">
+      <div class="final-emoji" id="final-emoji">🎉</div>
+      <h2 class="display" id="final-titulo">¡Muy bien!</h2>
+      <p class="final-sub" id="final-sub"></p>
+      <div class="puntaje-final">
+        <span id="final-puntos">0</span>
+        <small>puntos</small>
+      </div>
+      <div class="premio-card">
+        <p class="eyebrow">Tu merch</p>
+        <p class="premio-nombre" id="final-premio">—</p>
+        <p class="premio-condicion" id="final-condicion"></p>
+      </div>
+      <p class="hint">Mostrá esta pantalla en el stand para retirar tu premio.</p>
+      <button class="btn btn-jugar btn-lg" id="btn-nuevo-jugador" type="button">SIGUIENTE JUGADOR</button>
+    </div>
+  </section>
+
+  <!-- ===== Pantalla: Admin ===== -->
+  <section class="screen" id="screen-admin">
+    <div class="card">
+      <h2 class="display">Panel de organización</h2>
+      <div id="admin-login">
+        <label>PIN
+          <input type="password" id="in-pin" inputmode="numeric" placeholder="••••" />
+        </label>
+        <p class="error" id="error-pin" hidden>PIN incorrecto</p>
+        <button class="btn btn-jugar" id="btn-pin" type="button">Entrar</button>
+        <button class="btn btn-ghost" id="btn-salir-admin" type="button">Volver</button>
+      </div>
+      <div id="admin-panel" hidden>
+        <p class="admin-resumen" id="admin-resumen">0 participantes</p>
+        <p class="admin-metricas" id="admin-metricas"></p>
+        <p class="aviso" id="admin-alerta" hidden></p>
+        <div class="tabla-wrap">
+          <table id="tabla-participantes">
+            <thead>
+              <tr><th>Nombre</th><th>Email</th><th>Pts</th><th>Premio</th><th>Fecha</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="acciones">
+          <button class="btn btn-plantarse" id="btn-csv" type="button">Descargar CSV de participantes</button>
+          <button class="btn btn-plantarse" id="btn-csv-respuestas" type="button">Descargar CSV de respuestas</button>
+          <button class="btn btn-ghost" id="btn-borrar" type="button">Borrar datos</button>
+          <button class="btn btn-ghost" id="btn-salir-admin-2" type="button">Volver al juego</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="confeti" id="confeti" aria-hidden="true"></div>
+
+<script src="data/datos-offline.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

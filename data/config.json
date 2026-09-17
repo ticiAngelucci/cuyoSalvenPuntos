@@ -1,0 +1,36 @@
+{
+  "titulo": "Salven el Millón",
+  "subtitulo": "Hackathon Edition",
+  "redes": "@cuyoconnect",
+  "avisoSeguir": "Para retirar el merch hay que seguir a CuyoConnect en Instagram (@cuyoconnect).",
+  "vidas": 1,
+  "segundosPorPregunta": 30,
+  "usarTemporizador": true,
+  "pinAdmin": "2468",
+  "premios": [
+    {
+      "puntos": 0,
+      "premio": "Sticker de participación"
+    },
+    {
+      "puntos": 200,
+      "premio": "Pack de stickers + lapicera"
+    },
+    {
+      "puntos": 400,
+      "premio": "Vaso térmico"
+    },
+    {
+      "puntos": 700,
+      "premio": "Gorra"
+    },
+    {
+      "puntos": 1000,
+      "premio": "Remera"
+    },
+    {
+      "puntos": 1900,
+      "premio": "Buzo + kit completo de merch"
+    }
+  ]
+}
