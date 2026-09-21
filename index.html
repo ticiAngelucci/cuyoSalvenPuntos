@@ -41,6 +41,34 @@
         <label>Email
           <input type="email" id="in-email" autocomplete="email" inputmode="email" placeholder="tu@email.com" required />
         </label>
+        <div class="form-grid">
+          <label>Edad
+            <input type="number" id="in-edad" inputmode="numeric" min="10" max="99" placeholder="Tu edad" required />
+          </label>
+          <label>Departamento
+            <select id="in-departamento" required>
+              <option value="">Elegí uno</option>
+              <option>Capital</option>
+              <option>General Alvear</option>
+              <option>Godoy Cruz</option>
+              <option>Guaymallén</option>
+              <option>Junín</option>
+              <option>La Paz</option>
+              <option>Las Heras</option>
+              <option>Lavalle</option>
+              <option>Luján de Cuyo</option>
+              <option>Maipú</option>
+              <option>Malargüe</option>
+              <option>Rivadavia</option>
+              <option>San Carlos</option>
+              <option>San Martín</option>
+              <option>San Rafael</option>
+              <option>Santa Rosa</option>
+              <option>Tunuyán</option>
+              <option>Tupungato</option>
+            </select>
+          </label>
+        </div>
         <p class="error" id="error-registro" hidden></p>
         <button class="btn btn-jugar btn-lg" type="submit">JUGAR</button>
       </form>
@@ -103,7 +131,7 @@
 
   <!-- ===== Pantalla: Decisión (checkpoint) ===== -->
   <section class="screen" id="screen-decision">
-    <div class="card center">
+    <div class="card center decision-card">
       <div class="final-emoji">🎯</div>
       <p class="eyebrow">¡Nivel completado!</p>
       <h2 class="display">Tenés <span id="dec-puntos" class="destacado">0</span> puntos</h2>
@@ -114,7 +142,13 @@
         <p class="warn"><span class="icono-warn">▼</span> Si te quedás sin vidas, perdés los puntos de ese nivel y te llevás
           <strong id="dec-asegurados">0</strong>.</p>
       </div>
-      <p class="aviso" id="aviso-seguir"></p>
+      <a class="aviso aviso-instagram" id="instagram-link-decision" href="https://www.instagram.com/cuyoconnect/" target="_blank" rel="noopener noreferrer">
+        <img src="assets/instagram-qr.svg" alt="Código QR para seguir a CuyoConnect en Instagram" />
+        <span>
+          <strong id="aviso-seguir"></strong>
+          <small>Escaneá el QR para abrir @cuyoconnect</small>
+        </span>
+      </a>
       <div class="acciones">
         <button class="btn btn-plantarse btn-lg" id="btn-plantarse" type="button">ME PLANTO</button>
         <button class="btn btn-jugar btn-lg" id="btn-seguir" type="button">SIGO JUGANDO</button>
@@ -137,7 +171,10 @@
         <p class="premio-nombre" id="final-premio">—</p>
         <p class="premio-condicion" id="final-condicion"></p>
       </div>
-      <p class="hint">Mostrá esta pantalla en el stand para retirar tu premio.</p>
+      <a class="instagram-card" id="instagram-link" href="https://www.instagram.com/cuyoconnect/" target="_blank" rel="noopener noreferrer">
+        <img src="assets/instagram-qr.svg" alt="Código QR para seguir a CuyoConnect en Instagram" />
+        <span><strong>Seguinos en Instagram</strong><small>@cuyoconnect · Escaneá el QR</small></span>
+      </a>
       <button class="btn btn-jugar btn-lg" id="btn-nuevo-jugador" type="button">SIGUIENTE JUGADOR</button>
     </div>
   </section>
@@ -147,10 +184,10 @@
     <div class="card">
       <h2 class="display">Panel de organización</h2>
       <div id="admin-login">
-        <label>PIN
-          <input type="password" id="in-pin" inputmode="numeric" placeholder="••••" />
+        <label>Clave de administración
+          <input type="password" id="in-pin" autocomplete="current-password" placeholder="Tu clave" />
         </label>
-        <p class="error" id="error-pin" hidden>PIN incorrecto</p>
+        <p class="error" id="error-pin" hidden>Clave incorrecta</p>
         <button class="btn btn-jugar" id="btn-pin" type="button">Entrar</button>
         <button class="btn btn-ghost" id="btn-salir-admin" type="button">Volver</button>
       </div>
@@ -161,14 +198,14 @@
         <div class="tabla-wrap">
           <table id="tabla-participantes">
             <thead>
-              <tr><th>Nombre</th><th>Email</th><th>Pts</th><th>Premio</th><th>Fecha</th></tr>
+              <tr><th>Nombre</th><th>Email</th><th>Edad</th><th>Departamento</th><th>Pts</th><th>Premio</th><th>Fecha</th></tr>
             </thead>
             <tbody></tbody>
           </table>
         </div>
         <div class="acciones">
-          <button class="btn btn-plantarse" id="btn-csv" type="button">Descargar CSV de participantes</button>
-          <button class="btn btn-plantarse" id="btn-csv-respuestas" type="button">Descargar CSV de respuestas</button>
+          <button class="btn btn-plantarse" id="btn-pdf" type="button">Descargar informe PDF</button>
+          <button class="btn btn-plantarse" id="btn-excel" type="button">Descargar Excel completo</button>
           <button class="btn btn-ghost" id="btn-borrar" type="button">Borrar datos</button>
           <button class="btn btn-ghost" id="btn-salir-admin-2" type="button">Volver al juego</button>
         </div>
@@ -180,7 +217,11 @@
 
 <div class="confeti" id="confeti" aria-hidden="true"></div>
 
+<script src="data/supabase-config.js"></script>
 <script src="data/datos-offline.js"></script>
+<script src="vendor/jspdf.umd.min.js"></script>
+<script src="vendor/jspdf.plugin.autotable.min.js"></script>
+<script src="vendor/xlsx.full.min.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

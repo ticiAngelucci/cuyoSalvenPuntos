@@ -2,11 +2,12 @@
   "titulo": "Salven el Millón",
   "subtitulo": "Hackathon Edition",
   "redes": "@cuyoconnect",
+  "instagramUrl": "https://www.instagram.com/cuyoconnect/",
   "avisoSeguir": "Para retirar el merch hay que seguir a CuyoConnect en Instagram (@cuyoconnect).",
   "vidas": 1,
   "segundosPorPregunta": 30,
   "usarTemporizador": true,
-  "pinAdmin": "2468",
+  "pinAdminLocal": "2468",
   "premios": [
     {
       "puntos": 0,

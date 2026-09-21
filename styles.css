@@ -140,6 +140,27 @@ mark { background: var(--amarillo); color: var(--tinta); padding: 1px 8px; borde
 }
 [hidden] { display: none !important; }
 .aviso::before { content: "★"; color: var(--amarillo-osc); font-size: 17px; line-height: 1.2; }
+.aviso-instagram {
+  align-items: center;
+  gap: 18px;
+  padding: 16px 18px;
+  color: var(--tinta);
+  text-decoration: none;
+}
+.aviso-instagram::before { display: none; }
+.aviso-instagram img {
+  flex: 0 0 138px;
+  width: 138px;
+  height: 138px;
+  padding: 7px;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, .12);
+  image-rendering: pixelated;
+}
+.aviso-instagram span { display: grid; gap: 8px; text-align: left; }
+.aviso-instagram strong { font-size: 16px; line-height: 1.45; }
+.aviso-instagram small { color: var(--tinta-suave); font-size: 13px; }
 
 .premio-condicion {
   margin: 12px 0 0;
@@ -151,7 +172,9 @@ mark { background: var(--amarillo); color: var(--tinta); padding: 1px 8px; borde
 
 /* ---------- formulario ---------- */
 label { display: block; font-size: 13px; color: var(--tinta-suave); margin-bottom: 14px; font-weight: 600; }
-input {
+.form-grid { display: grid; grid-template-columns: minmax(100px, .7fr) minmax(0, 1.3fr); gap: 12px; }
+input,
+select {
   width: 100%;
   margin-top: 6px;
   padding: 15px 18px;
@@ -166,7 +189,8 @@ input {
   transition: border-color .2s ease, background .2s ease, transform .15s ease;
 }
 input::placeholder { color: #a5a5ab; }
-input:focus { border-color: var(--amarillo-osc); background: #fffdf0; transform: translateY(-1px); }
+input:focus,
+select:focus { border-color: var(--amarillo-osc); background: #fffdf0; transform: translateY(-1px); }
 
 /* ---------- botones ---------- */
 .btn {
@@ -361,6 +385,9 @@ input:focus { border-color: var(--amarillo-osc); background: #fffdf0; transform:
 .oculto { display: none; }
 
 /* ---------- decisión ---------- */
+.decision-card { padding-top: clamp(18px, 3.5vw, 26px); padding-bottom: clamp(18px, 3.5vw, 26px); }
+.decision-card .final-emoji { font-size: 52px; line-height: 1; }
+.decision-card .riesgo { margin-bottom: 14px; }
 .destacado { background: var(--amarillo); color: var(--negro); padding: 0 10px; border-radius: 10px; }
 .premio-actual { color: var(--tinta-suave); margin: 0 0 18px; font-size: 16px; }
 .riesgo { background: #f6f6f7; border-radius: 20px; padding: 18px; text-align: left; margin-bottom: 20px; }
@@ -389,6 +416,32 @@ input:focus { border-color: var(--amarillo-osc); background: #fffdf0; transform:
 }
 .premio-card .eyebrow { color: var(--amarillo); }
 .premio-nombre { font-size: clamp(22px, 5.6vw, 32px); font-weight: 700; margin: 4px 0 0; }
+.instagram-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 20px;
+  color: var(--tinta);
+  background: linear-gradient(135deg, #fff4f7, #fffbea);
+  border: 2px solid var(--rosa);
+  border-radius: 20px;
+  text-decoration: none;
+}
+.instagram-card img {
+  width: clamp(190px, 52vw, 230px);
+  height: clamp(190px, 52vw, 230px);
+  padding: 8px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .14);
+  image-rendering: pixelated;
+}
+.instagram-card span { display: grid; gap: 5px; text-align: center; }
+.instagram-card strong { font-size: 20px; }
+.instagram-card small { color: var(--tinta-suave); font-size: 14px; }
 .hint { color: var(--tinta-suave); font-size: 13px; margin: 14px 0 20px; }
 
 /* ---------- admin ---------- */
@@ -399,6 +452,14 @@ th { position: sticky; top: 0; background: var(--negro); color: var(--amarillo);
 tbody tr:nth-child(even) { background: #fafafa; }
 .admin-resumen { color: var(--tinta-suave); margin: 0; font-weight: 600; }
 .admin-metricas { color: var(--tinta-suave); margin: 6px 0 12px; font-size: 13px; }
+
+@media (max-width: 480px) {
+  .form-grid { grid-template-columns: 1fr; gap: 0; }
+  .aviso-instagram { flex-direction: column; gap: 11px; text-align: center; }
+  .aviso-instagram img { flex-basis: 122px; width: 122px; height: 122px; }
+  .aviso-instagram span { text-align: center; }
+  .instagram-card { padding: 18px 14px; }
+}
 
 /* ---------- confeti ---------- */
 .confeti { position: fixed; inset: 0; pointer-events: none; z-index: 5; overflow: hidden; }

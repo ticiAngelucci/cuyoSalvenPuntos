@@ -1,53 +1,119 @@
-# Salven el Millón — Hackathon Edition
+# Salven el Millón — CuyoConnect
 
-Juego de preguntas para stand (tablet o celular). **Solo frontend**: HTML, CSS y JavaScript, sin backend ni instalación.
+Juego de preguntas para usar en un stand desde una tablet o celular. Es un frontend estático (HTML, CSS y JavaScript), con persistencia centralizada en Supabase y respaldo offline en el navegador.
 
-Diseño inspirado en cuyoconnect.com: fondo claro, negro, amarillo resaltador y pasteles, con el logo de CuyoConnect en `assets/`.
-Tipografías Anton + Sora desde Google Fonts (si la tablet está sin internet, usa las del sistema).
+## Cómo levantarlo
 
-## Cómo usarlo
+Desde esta carpeta ejecutá:
 
-- **Opción simple**: abrir `index.html` con doble clic (funciona gracias a `data/datos-offline.js`).
-- **Opción recomendada** (lee los JSON directamente): servir la carpeta y abrir la URL en la tablet.
-  ```bash
-  python3 -m http.server 8000
-  ```
-- En la tablet conviene "Agregar a pantalla de inicio" y usarlo en pantalla completa.
+```bash
+python3 -m http.server 8000
+```
 
-## Cómo se juega
+Después abrí en la misma computadora:
 
-1. El jugador carga **nombre, apellido y email**.
-2. Tres niveles cortos: 4 preguntas de 100, 3 de 200 y 3 de 300 puntos (máximo 1900, 10 preguntas en total).
-   Cada nivel tiene 10 preguntas cargadas y el juego sortea cuáles toca (`preguntasPorRonda` en `data/preguntas.json`).
-3. **1 vida por nivel**. Un error o el tiempo agotado termina el nivel.
-4. Al terminar un nivel, los puntos quedan **asegurados** y el jugador elige:
-   - **Me planto y canjeo**: se lleva todo lo acumulado y ve su premio.
-   - **Sigo jugando**: arriesga solo los puntos del nivel siguiente (si se queda sin vidas, conserva lo asegurado).
-5. La pantalla final muestra puntos y premio para mostrar en el stand.
+```text
+http://localhost:8000
+```
 
-## Editar contenido (los "JSON")
+Para abrirlo desde una tablet conectada al mismo Wi-Fi, consultá la IP de la computadora:
 
-- `data/preguntas.json`: niveles, preguntas, opciones y puntaje. `correcta` es el índice (0, 1 o 2) de la opción correcta; en pantalla las opciones se mezclan solas.
-- `data/config.json`: título, cantidad de vidas, segundos por pregunta, PIN del panel, el aviso de seguir a CuyoConnect (`avisoSeguir`) y la tabla de premios por puntos.
+```bash
+hostname -I
+```
 
-Después de editar los JSON, regenerar la copia offline:
+Y en la tablet entrá a `http://IP-DE-LA-COMPUTADORA:8000`, por ejemplo `http://192.168.1.20:8000`. Si no abre, revisá que el firewall permita el puerto 8000.
+
+También se puede abrir `index.html` con doble clic, pero para Supabase y para probar en otros dispositivos conviene usar el servidor HTTP.
+
+## Configurar Supabase
+
+Sin esta configuración el juego sigue funcionando en **modo local**, pero los datos quedan solamente en ese navegador.
+
+1. Creá un proyecto en Supabase.
+2. Abrí `supabase/migrations/001_partidas.sql`.
+3. Copiá todo el SQL y ejecutalo en **Supabase > SQL Editor**.
+4. En una consulta nueva del SQL Editor, creá la clave administrativa con el siguiente bloque. Reemplazá `TU-CLAVE-LARGA` y no guardes esa clave en el repositorio:
+
+```sql
+insert into private.salven_config (id, admin_pin_hash)
+values (true, extensions.crypt('TU-CLAVE-LARGA', extensions.gen_salt('bf')))
+on conflict (id) do update
+set admin_pin_hash = excluded.admin_pin_hash;
+```
+
+5. En el diálogo **Connect** del proyecto copiá la Project URL y la **Publishable key**.
+6. Pegá ambos valores en `data/supabase-config.js`:
+
+```js
+window.SUPABASE_CONFIG = {
+  url: 'https://tu-proyecto.supabase.co',
+  publishableKey: 'sb_publishable_...',
+};
+```
+
+La publishable key está pensada para usarse en el navegador. **Nunca** pongas la `secret` o `service_role` key en este proyecto.
+
+La migración aplica Row Level Security: el frontend público puede registrar partidas mediante una función limitada, pero no puede leer ni escribir la tabla directamente. El panel lee y borra datos únicamente a través de funciones que validan la clave administrativa.
+
+Para cambiar la clave administrativa más adelante, repetí el bloque `insert ... on conflict` anterior o ejecutá:
+
+```sql
+update private.salven_config
+set admin_pin_hash = extensions.crypt('TU-NUEVA-CLAVE', extensions.gen_salt('bf'))
+where id = true;
+```
+
+## Datos y modo offline
+
+Al terminar cada partida se registra:
+
+- nombre, apellido y email;
+- edad y departamento de Mendoza;
+- puntos, premio, nivel alcanzado y fecha;
+- cada pregunta, respuesta elegida, respuesta correcta, acierto, tiempo y puntos.
+
+Con Supabase configurado, la partida se envía a la base y se elimina de la cola local. Si se corta internet, queda en `localStorage` y se reintenta automáticamente al abrir la app o terminar otra partida. Esto evita perder datos en el stand, pero conviene recuperar la conexión antes de cerrar o borrar los datos del navegador.
+
+## Panel de organización e informes
+
+Entrá desde **Panel de organización** en la portada.
+
+- Con Supabase configurado, usá la clave elegida en la migración SQL.
+- En modo local, el PIN de prueba es `2468` y se cambia con `pinAdminLocal` en `data/config.json`.
+
+El panel muestra un resumen operativo y permite descargar dos informes construidos sobre todas las partidas, sin filtros:
+
+- **PDF visual:** indicadores generales, edad promedio, gráficos por departamento, rango de edad, premio, resultado y nivel alcanzado; rendimiento agregado por pregunta; y un anexo con nombre, apellido, email y demás datos de cada participante.
+- **Excel completo:** hojas `Resumen`, `Participantes`, `Respuestas` y `Preguntas`. La hoja `Respuestas` detalla, para cada persona y pregunta, qué contestó, cuál era la respuesta correcta y si acertó o se equivocó.
+
+Para que el navegador no se vuelva lento con miles de filas, la tabla visual muestra las últimas 250 partidas; los informes incluyen todas (la carga desde Supabase se pagina de a 1.000). Con varios miles de personas, la generación del PDF puede tardar unos segundos porque incorpora el padrón completo.
+
+## QR de Instagram
+
+La pantalla del premio muestra un QR local que apunta a:
+
+```text
+https://www.instagram.com/cuyoconnect/
+```
+
+El enlace visible se configura con `instagramUrl` en `data/config.json`. Si cambia la cuenta, también hay que regenerar `assets/instagram-qr.svg` para que el QR apunte al nuevo destino.
+
+## Editar preguntas y premios
+
+- `data/preguntas.json`: niveles, preguntas, opciones y puntaje. `correcta` es el índice `0`, `1` o `2`.
+- `data/config.json`: título, vidas, tiempo, premios, Instagram y PIN del modo local.
+
+Después de editar cualquiera de esos JSON, actualizá la copia que permite abrir el juego sin servidor:
 
 ```bash
 python3 generar-offline.py
 ```
 
-## Panel de organización
+## Flujo del juego
 
-Link "Panel de organización" en la pantalla inicial. PIN por defecto: **2468** (se cambia en `config.json`).
-
-Muestra los participantes guardados en la tablet, un resumen de métricas (respuestas, % de aciertos, cuántos se plantaron) y dos descargas que Excel abre directo:
-
-- **CSV de participantes**: nombre, apellido, email, puntos, premio, nivel alcanzado, si se plantó y fecha.
-- **CSV de respuestas**: una fila por respuesta (jugador, email, nivel, número, pregunta, qué eligió, cuál era la correcta, si acertó, si se acabó el tiempo, segundos usados y puntos).
-
-> Los datos se guardan en el `localStorage` del navegador de esa tablet: descargá los CSV antes de borrar el historial o cambiar de dispositivo.
-
-### Volumen de datos
-
-Cada partida ocupa ~2,4 KB con el detalle de respuestas, así que **1000 partidas son ~2,4 MB** contra el límite de ~5 MB por navegador: el panel abre y exporta en milisegundos.
-El panel avisa cuando se superan los 3,5 MB y, si el navegador rechaza una escritura, el juego muestra un cartel para descargar los CSV y borrar los datos. Conviene exportar y limpiar al final de cada jornada.
+1. El participante carga sus datos.
+2. Juega tres niveles: 4 preguntas de 100 puntos, 3 de 200 y 3 de 300.
+3. Tiene una vida por nivel. Un error o tiempo agotado termina ese nivel.
+4. Al completar un nivel, puede plantarse o seguir jugando.
+5. La pantalla final muestra los puntos, el premio y el QR de Instagram.
