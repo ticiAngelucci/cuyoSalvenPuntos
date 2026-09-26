@@ -1030,9 +1030,14 @@ async function descargarExcel() {
 async function borrarDatos() {
   const ubicacion = supabaseDisponible() ? 'Supabase' : 'esta tablet';
   if (!confirm(`¿Borrar definitivamente todos los participantes guardados en ${ubicacion}?`)) return;
+  const boton = $('btn-borrar');
+  const textoOriginal = boton.textContent;
+  boton.disabled = true;
+  boton.textContent = 'Borrando…';
   try {
+    let cantidad = estado.participantesAdmin.length;
     if (supabaseDisponible()) {
-      await pedirASupabase('rpc/admin_borrar_partidas', {
+      cantidad = await pedirASupabase('rpc/admin_borrar_partidas', {
         method: 'POST',
         body: JSON.stringify({ p_pin: estado.adminPin }),
       });
@@ -1041,8 +1046,13 @@ async function borrarDatos() {
     localStorage.removeItem(ROTACION_KEY);
     estado.participantesAdmin = [];
     renderTabla();
-  } catch {
-    alert('No se pudieron borrar los datos. Revisá la conexión y el PIN.');
+    alert(`${cantidad || 0} ${cantidad === 1 ? 'participante borrado' : 'participantes borrados'}.`);
+  } catch (error) {
+    console.error(error);
+    alert(`No se pudieron borrar los datos: ${error.message}`);
+  } finally {
+    boton.disabled = false;
+    boton.textContent = textoOriginal;
   }
 }
 

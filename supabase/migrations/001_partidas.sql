@@ -143,7 +143,10 @@ begin
     raise exception 'Clave de administración incorrecta' using errcode = '42501';
   end if;
 
-  delete from public.partidas;
+  -- El filtro explícito es necesario cuando Supabase tiene habilitada la
+  -- protección contra DELETE sin WHERE. `id` es la clave primaria y nunca es null.
+  delete from public.partidas
+  where id is not null;
   get diagnostics cantidad = row_count;
   return cantidad;
 end;

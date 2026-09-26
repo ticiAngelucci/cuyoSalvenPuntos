@@ -56,6 +56,9 @@ La publishable key está pensada para usarse en el navegador. **Nunca** pongas l
 
 La migración aplica Row Level Security: el frontend público puede registrar partidas mediante una función limitada, pero no puede leer ni escribir la tabla directamente. El panel lee y borra datos únicamente a través de funciones que validan la clave administrativa.
 
+Si el proyecto ya estaba configurado antes de la corrección del borrado, ejecutá también
+`supabase/migrations/002_corregir_borrado_partidas.sql` en el SQL Editor.
+
 Para cambiar la clave administrativa más adelante, repetí el bloque `insert ... on conflict` anterior o ejecutá:
 
 ```sql
