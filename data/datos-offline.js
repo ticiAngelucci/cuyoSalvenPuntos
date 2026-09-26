@@ -17,23 +17,23 @@ window.DATOS_OFFLINE = {
       },
       {
         "puntos": 200,
-        "premio": "Pack de stickers + lapicera"
+        "premio": ""
       },
       {
         "puntos": 400,
-        "premio": "Vaso térmico"
+        "premio": ""
       },
       {
         "puntos": 700,
-        "premio": "Gorra"
+        "premio": ""
       },
       {
         "puntos": 1000,
-        "premio": "Remera"
+        "premio": ""
       },
       {
         "puntos": 1900,
-        "premio": "Buzo + kit completo de merch"
+        "premio": ""
       }
     ]
   },

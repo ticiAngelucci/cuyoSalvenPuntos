@@ -116,4 +116,4 @@ python3 generar-offline.py
 2. Juega tres niveles: 4 preguntas de 100 puntos, 3 de 200 y 3 de 300.
 3. Tiene una vida por nivel. Un error o tiempo agotado termina ese nivel.
 4. Al completar un nivel, puede plantarse o seguir jugando.
-5. La pantalla final muestra los puntos, el premio y el QR de Instagram.
+5. La pantalla final muestra los puntos, la condición de retiro y el QR de Instagram. El premio se define en el evento.

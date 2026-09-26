@@ -48,7 +48,7 @@ function premioPara(puntos) {
   const premios = estado.config.premios.slice().sort((a, b) => a.puntos - b.puntos);
   let elegido = premios[0];
   for (const p of premios) if (puntos >= p.puntos) elegido = p;
-  return elegido.premio;
+  return elegido?.premio || 'A definir en el evento';
 }
 
 function crearId() {
@@ -496,7 +496,6 @@ function siguientePaso() {
 function mostrarDecision() {
   const siguienteNivel = estado.niveles[estado.nivelIdx + 1];
   const maximo = cantidadDePreguntas(siguienteNivel) * siguienteNivel.puntosPorPregunta;
-  $('dec-premio').textContent = premioPara(estado.puntosAsegurados);
   $('dec-siguiente-nivel').textContent = siguienteNivel.nombre.split(':')[0];
   $('dec-max').textContent = '+' + maximo;
   $('dec-asegurados').textContent = estado.puntosAsegurados;
@@ -542,7 +541,6 @@ function terminarJuego(completoTodo) {
     : sinVidas
       ? `Perdiste los puntos del ${estado.niveles[estado.nivelIdx].nombre.split(':')[0]}, pero conservás lo asegurado.`
       : 'Decisión inteligente: te llevás todo lo que sumaste.';
-  $('final-premio').textContent = premio;
   $('final-condicion').textContent = estado.config.avisoSeguir || '';
   $('final-condicion').hidden = !estado.config.avisoSeguir;
   mostrarPantalla('screen-final');
